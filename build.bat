@@ -1,31 +1,31 @@
 @echo off
 :: ================================================================
-:: S.T.E.P.  ビルドスクリプト (Windows)
-:: 使い方: build.bat をダブルクリック or コマンドプロンプトで実行
+:: S.T.E.P. - Build Script for Windows
+:: Double-click or run from Command Prompt
 :: ================================================================
 
 set APP_NAME=STEP
 set SCRIPT=main.py
 
 echo ======================================================
-echo   S.T.E.P.  パッケージビルド
+echo   S.T.E.P. - Windows Build
 echo ======================================================
 
-:: PyInstaller チェック
+:: Check PyInstaller
 python -c "import PyInstaller" 2>nul
 if errorlevel 1 (
-    echo ^>^>^> PyInstaller をインストールします...
-    pip install pyinstaller
+    echo [INFO] Installing PyInstaller...
+    python -m pip install pyinstaller
 )
 
-:: 依存パッケージ
-echo ^>^>^> 依存パッケージを確認します...
-pip install -r requirements.txt -q
+:: Install dependencies
+echo [INFO] Checking dependencies...
+python -m pip install -r requirements.txt -q
 
-:: ビルド実行
-echo ^>^>^> ビルド開始: %APP_NAME%
+:: Run build
+echo [INFO] Building %APP_NAME%...
 
-pyinstaller ^
+python -m PyInstaller ^
     --noconfirm ^
     --clean ^
     --windowed ^
@@ -39,11 +39,16 @@ pyinstaller ^
     --hidden-import "cryptography" ^
     "%SCRIPT%"
 
+if errorlevel 1 (
+    echo.
+    echo [ERROR] Build failed.
+    pause
+    exit /b 1
+)
+
 echo.
 echo ======================================================
-echo ✅ 完了！
-echo.
-echo    dist\%APP_NAME%\%APP_NAME%.exe
+echo [DONE] dist\%APP_NAME%\%APP_NAME%.exe
 echo ======================================================
 
 pause
